@@ -61,7 +61,7 @@ Create folder which would hold artifacts (most notably - kubeconfig to access th
 sudo podman pull quay.io/vrutkovs/openshift-40-centos
 sudo podman run --rm \
   -v /path/to/folder/from/previous/step:/usr/share/openshift-ansible/inventory/dynamic/injected \
-  -v /tmp/gcp-cluster:/tmp/artifacts
+  -v /tmp/gcp-cluster:/tmp/artifacts/installer
   -e INSTANCE_PREFIX=vrutkovs \
   -e OPTS="-vvv" \
   -ti quay.io/vrutkovs/openshift-40-centos
@@ -71,4 +71,17 @@ The cluster should be ready in 20 mins, so once its done run:
 ```
 export KUBECONFIG=/tmp/gcp-cluster/auth/kubeconfig
 kubectl get nodes
+```
+
+# Deprovision
+
+To deprovisoin the cluster and remove most of the GCP infra run:
+```
+sudo podman run --rm \
+  -v /path/to/folder/from/previous/step:/usr/share/openshift-ansible/inventory/dynamic/injected \
+  -v /tmp/gcp-cluster:/tmp/artifacts/installer
+  -e INSTANCE_PREFIX=vrutkovs \
+  -e OPTS="-vvv" \
+  -ti quay.io/vrutkovs/openshift-40-centos \
+  deprovision
 ```
