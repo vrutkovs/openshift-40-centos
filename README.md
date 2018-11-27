@@ -65,7 +65,7 @@ sudo podman pull quay.io/vrutkovs/openshift-40-centos
 sudo podman run --rm \
   -v /path/to/folder/from/previous/step:/usr/share/openshift-ansible/inventory/dynamic/injected \
   -v /tmp/gcp-cluster:/tmp/artifacts/installer
-  -e INSTANCE_PREFIX=vrutkovs \
+  -e INSTANCE_PREFIX="<yourname>" \
   -e OPTS="-vvv" \
   -ti quay.io/vrutkovs/openshift-40-centos
 ```
