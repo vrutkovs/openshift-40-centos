@@ -63,7 +63,7 @@ Create folder which would hold artifacts (most notably - kubeconfig to access th
 mkdir -p /tmp/gcp-cluster/auth
 sudo podman pull quay.io/vrutkovs/openshift-40-centos
 sudo podman run --rm \
-  -v /path/to/folder/from/previous/step:/usr/share/openshift-ansible/inventory/dynamic/injected \
+  -v /path/to/folder/from/previous/step:/usr/share/ansible/openshift-ansible/inventory/dynamic/injected \
   -v /tmp/gcp-cluster/auth:/tmp/artifacts/installer/auth \
   -e INSTANCE_PREFIX="<yourname>" \
   -e OPTS="-vvv" \
@@ -81,7 +81,7 @@ kubectl get nodes
 To deprovisoin the cluster and remove most of the GCP infra run:
 ```
 sudo podman run --rm \
-  -v /path/to/folder/from/previous/step:/usr/share/openshift-ansible/inventory/dynamic/injected \
+  -v /path/to/folder/from/previous/step:/usr/share/ansible/openshift-ansible/inventory/dynamic/injected \
   -v /tmp/gcp-cluster:/tmp/artifacts/installer \
   -e INSTANCE_PREFIX=vrutkovs \
   -e OPTS="-vvv" \
