@@ -23,11 +23,11 @@ sudo podman run --rm \
   -ti registry.svc.ci.openshift.org/openshift/origin-v4.0:installer \
   create install-config
 
-# Update install configs to set desired number of masters and workers
-sed -i "/master/{n;s/1/${MASTERS}/}" /tmp/artifacts/installer/.openshift_install_state.json
-sed -i "/worker/{n;s/1/${WORKERS}/}" /tmp/artifacts/installer/.openshift_install_state.json
-sed -i "/master/{n;n;s/1/${MASTERS}/}" /tmp/artifacts/installer/install-config.yml
-sed -i "/master/{n;n;s/1/${WORKERS}/}" /tmp/artifacts/installer/install-config.yml
+# Update install configs to set 3 masters and 3 workers
+sed -i "/master/{n;s/1/3/}" /tmp/artifacts/installer/.openshift_install_state.json
+sed -i "/worker/{n;s/1/3/}" /tmp/artifacts/installer/.openshift_install_state.json
+sed -i "/master/{n;n;s/1/3/}" /tmp/artifacts/installer/install-config.yml
+sed -i "/master/{n;n;s/1/3/}" /tmp/artifacts/installer/install-config.yml
 
 # Create ignition configs
 sudo podman run --rm \              
