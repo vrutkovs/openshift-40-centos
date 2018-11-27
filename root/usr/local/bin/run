@@ -10,4 +10,8 @@
 
 cd ${WORK_DIR}
 
-exec ansible-playbook ${OPTS} test/gcp/launch.yml
+if [ $1 == `deprovision` ]; then
+  exec ansible-playbook ${OPTS} test/gcp/deprovision.yml
+else
+  exec ansible-playbook ${OPTS} test/gcp/launch.yml
+fi
