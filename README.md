@@ -49,7 +49,7 @@ This would create three files - `bootstrap.ign`, `master.ign`, `worker.ign`
 
 # Prepare GCP creds
 Prepare a folder which consists the following files (see `example-injected` folder):
-* `gce.json` - this is the JSON which GCP uses to authenticate
+* `gce.json` - this is the JSON which GCP uses to authenticate. `libra.pem` should work
 * `ssh-privatekey` - private key which would be used to access instances
 * `vars.yaml` - GCP-related vars - projects, instances to provision etc.
 * `vars-origin.yaml` - Origin-related vars
