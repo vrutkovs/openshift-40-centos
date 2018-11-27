@@ -84,7 +84,6 @@ To deprovisoin the cluster and remove most of the GCP infra run:
 ```
 sudo podman run --rm \
   -v /path/to/folder/from/previous/step:/usr/share/ansible/openshift-ansible/inventory/dynamic/injected \
-  -v /tmp/gcp-cluster:/tmp/artifacts/installer \
   -e INSTANCE_PREFIX=vrutkovs \
   -e OPTS="-vvv" \
   -ti quay.io/vrutkovs/openshift-40-centos \
