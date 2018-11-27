@@ -1,7 +1,6 @@
 #!/bin/bash -e
 #
-# This file serves as the default command to the openshift-ansible image.
-# Runs a playbook with inventory as specified by environment variables.
+# Runs a playbook to destroy existing cluster
 #
 # For more information see the documentation:
 #	https://github.com/openshift/openshift-ansible/blob/master/README_CONTAINER_IMAGE.md
@@ -9,4 +8,4 @@
 # SOURCE and HOME DIRECTORY: /opt/app-root/src
 
 cd ${WORK_DIR}
-exec ansible-playbook ${OPTS} test/gcp/launch.yml
+exec ansible-playbook ${OPTS} test/gcp/deprovision.yml
