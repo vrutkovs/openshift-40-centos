@@ -1,3 +1,5 @@
+[![Docker Repository on Quay](https://quay.io/repository/vrutkovs/openshift-40-centos/status "Docker Repository on Quay")](https://quay.io/repository/vrutkovs/openshift-40-centos)
+
 # Getting started with Openshift 4.0 on GCP
 
 Note, that this is a development version, alpha-stage.
