@@ -60,6 +60,7 @@ This folder would be used by playbooks
 # Start the install
 Create folder which would hold artifacts (most notably - kubeconfig to access the cluster) - say, `/tmp/gcp-cluster`
 ```
+mkdir -p /tmp/gcp-cluster/auth
 sudo podman pull quay.io/vrutkovs/openshift-40-centos
 sudo podman run --rm \
   -v /path/to/folder/from/previous/step:/usr/share/openshift-ansible/inventory/dynamic/injected \
