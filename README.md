@@ -18,8 +18,8 @@ Requirements:
 Put your pull secret in `pull_secret.json`
 
 Prepare "injected/" directory which contains the following files (see `example-injected` folder):
-* `gce.json` - this is the JSON which GCP uses to authenticate. `libra.pem` should work
-* `ssh-privatekey` - private key which would be used to access instances
+* `gce.json` - this is the JSON which GCP uses to authenticate
+* `ssh-privatekey` - private key which would be used to access instances (e.g. `libra.pem`)
 * `vars.yaml` - GCP-related vars - projects, instances to provision etc.
 * `vars-origin.yaml` - Origin-related vars
 
