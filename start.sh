@@ -11,8 +11,15 @@ INSTALLER_IMAGE="registry.svc.ci.openshift.org/openshift/origin-v4.0:installer"
 ANSIBLE_IMAGE="quay.io/vrutkovs/openshift-40-centos"
 PODMAN="sudo podman"
 PODMAN_PULL="${PODMAN} pull"
-PODMAN_RUN="${PODMAN} run"
-
+PODMAN_RUN="${PODMAN} run --rm -v $(pwd):/output:z --user $(id -u)"
+PODMAN_PARAMS="-e OPENSHIFT_INSTALL_PLATFORM=libvirt \
+-e OPENSHIFT_INSTALL_LIBVIRT_URI=qemu+tcp://192.168.122.1/system \
+-e OPENSHIFT_INSTALL_LIBVIRT_IMAGE=file:///unused \
+-e OPENSHIFT_INSTALL_CLUSTER_NAME=${USERNAME} \
+-e OPENSHIFT_INSTALL_BASE_DOMAIN=origin-gce.dev.openshift.com \
+-e OPENSHIFT_INSTALL_EMAIL_ADDRESS=whatever@redhat.com \
+-e OPENSHIFT_INSTALL_PASSWORD=muchsecuritywow \
+-e OPENSHIFT_INSTALL_PULL_SECRET_PATH=/output/pull_secret.json"
 
 if [ ! -f ./pull_secret.json ]; then
   echo "Pull secret not found!"
@@ -34,35 +41,14 @@ ${PODMAN_RUN} -rm -ti ${INSTALLER_IMAGE} version
 
 echo
 echo "Creating bootstrap.ign"
-${PODMAN_RUN} --rm \
-  -v $(pwd):/output \
-  -e OPENSHIFT_INSTALL_PLATFORM="libvirt" \
-  -e OPENSHIFT_INSTALL_LIBVIRT_URI="qemu+tcp://192.168.122.1/system" \
-  -e OPENSHIFT_INSTALL_LIBVIRT_IMAGE="file:///unused" \
-  -e OPENSHIFT_INSTALL_CLUSTER_NAME="${USERNAME}" \
-  -e OPENSHIFT_INSTALL_BASE_DOMAIN="origin-gce.dev.openshift.com" \
-  -e OPENSHIFT_INSTALL_EMAIL_ADDRESS="whatever@redhat.com" \
-  -e OPENSHIFT_INSTALL_PASSWORD="muchsecuritywow" \
-  -e OPENSHIFT_INSTALL_PULL_SECRET_PATH="/output/pull_secret.json" \
-  -ti ${INSTALLER_IMAGE} \
-  create install-config
+${PODMAN_RUN} $PODMAN_PARAMS -ti ${INSTALLER_IMAGE} create install-config
 
 sed -i "/master/{n;s/1/3/}" .openshift_install_state.json
 sed -i "/worker/{n;s/1/3/}" .openshift_install_state.json
 sed -i "/master/{n;n;s/1/3/}" install-config.yml
 sed -i "/worker/{n;n;s/1/3/}" install-config.yml
 
-${PODMAN_RUN} --rm \
-  -v $(pwd):/output \
-  -e OPENSHIFT_INSTALL_PLATFORM="libvirt" \
-  -e OPENSHIFT_INSTALL_LIBVIRT_URI="qemu+tcp://192.168.122.1/system" \
-  -e OPENSHIFT_INSTALL_CLUSTER_NAME="${USERNAME}" \
-  -e OPENSHIFT_INSTALL_BASE_DOMAIN="origin-gce.dev.openshift.com" \
-  -e OPENSHIFT_INSTALL_EMAIL_ADDRESS="whatever@redhat.com" \
-  -e OPENSHIFT_INSTALL_PASSWORD="muchsecuritywow" \
-  -e OPENSHIFT_INSTALL_PULL_SECRET_PATH="/output/pull_secret.json" \
-  -ti ${INSTALLER_IMAGE} \
-  create ignition-configs
+${PODMAN_RUN} $PODMAN_PARAMS -ti ${INSTALLER_IMAGE} create ignition-configs
 
 cp bootstrap.ign injected/
 
@@ -71,9 +57,9 @@ echo "Provisioning GCP cluster"
 mkdir -p ./auth
 chmod 777 ./auth
 ${PODMAN_PULL} ${ANSIBLE_IMAGE}
-${PODMAN_RUN} --rm \
-  -v $(pwd)/injected:/usr/share/ansible/openshift-ansible/inventory/dynamic/injected \
-  -v $(pwd)/auth:/tmp/artifacts/installer/auth \
+${PODMAN_RUN} \
+  -v $(pwd)/injected:/usr/share/ansible/openshift-ansible/inventory/dynamic/injected:z \
+  -v $(pwd)/auth:/tmp/artifacts/installer/auth:z \
   -e INSTANCE_PREFIX="${USERNAME}" \
   -e OPTS="-vvv" \
   -ti ${ANSIBLE_IMAGE}
