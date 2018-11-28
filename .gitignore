@@ -1,0 +1,7 @@
+injected/
+pull_secret.json
+auth/
+.openshift_install_state.json
+.openshift_install.log
+install-config.yml
+*.ign

@@ -26,7 +26,8 @@ LABEL name="openshift/origin-ansible" \
       io.k8s.description="A containerized openshift-ansible image to let you run playbooks to install, upgrade, maintain and check an OpenShift cluster" \
       io.openshift.expose-services="" \
       io.openshift.tags="openshift,install,upgrade,ansible" \
-      atomic.run="once"
+      atomic.run="once" \
+      commit="e1d4d6f09"
 
 ENV USER_UID=1001 \
     HOME=/opt/app-root/src \
