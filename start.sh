@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eux
 
-if [ -z $1 ]; then
+if (( $# != 1 )); then
   echo "Usage: ./run.sh <username>"
   exit 1
 fi
