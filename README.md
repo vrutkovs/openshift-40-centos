@@ -33,15 +33,5 @@ It would do the following:
 * Run a playbook, which would convert Ignition files into ansible tasks and provisions the cluster
 
 In the end the playbook would create `./auth/kubeconfig` file, which can be used to access the cluster
-
-# Deprovision
-
-To deprovisoin the cluster and remove most of the GCP infra run:
-```
-sudo podman run --rm \
-  -v $(pwd)/injected:/usr/share/ansible/openshift-ansible/inventory/dynamic/injected \
-  -e INSTANCE_PREFIX=vrutkovs \
-  -e OPTS="-vvv" \
-  -ti quay.io/vrutkovs/openshift-40-centos \
-  deprovision
-```
+and start 'sh' shell.
+Exit the shell (Ctrl+D) to start cluster deprovision.

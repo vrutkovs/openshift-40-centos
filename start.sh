@@ -68,3 +68,12 @@ export KUBECONFIG=./auth/kubeconfig
 oc get nodes
 
 echo "Cluster provisioned"
+echo "Exit the shell to deprovision cluster"
+sh
+
+sudo podman run --rm \
+  -v $(pwd)/injected:/usr/share/ansible/openshift-ansible/inventory/dynamic/injected:z \
+  -e INSTANCE_PREFIX="${USERNAME}" \
+  -e OPTS="-vvv" \
+  -ti ${ANSIBLE_IMAGE} \
+  deprovision
