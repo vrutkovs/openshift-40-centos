@@ -71,7 +71,7 @@ echo "Cluster provisioned"
 echo "Exit the shell to deprovision cluster"
 sh
 
-sudo podman run --rm \
+${PODMAN_RUN} \
   -v $(pwd)/injected:/usr/share/ansible/openshift-ansible/inventory/dynamic/injected:z \
   -e INSTANCE_PREFIX="${USERNAME}" \
   -e OPTS="-vvv" \
