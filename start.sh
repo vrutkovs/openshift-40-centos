@@ -7,9 +7,6 @@ if (( $# != 1 )); then
 fi
 
 USERNAME=$1
-INSTALLER_IMAGE="registry.svc.ci.openshift.org/openshift/origin-v4.0:installer"
-ANSIBLE_IMAGE="quay.io/vrutkovs/openshift-40-centos"
-
 # Replace with empty string to skip selinux relabel
 MOUNT_FLAGS=":z"
 # Update with docker if podman is not available
@@ -25,6 +22,15 @@ PODMAN_PARAMS="-e OPENSHIFT_INSTALL_PLATFORM=libvirt \
 -e OPENSHIFT_INSTALL_EMAIL_ADDRESS=whatever@redhat.com \
 -e OPENSHIFT_INSTALL_PASSWORD=muchsecuritywow \
 -e OPENSHIFT_INSTALL_PULL_SECRET_PATH=/output/pull_secret.json"
+
+# Set local path of openshift-ansible repo to replace existing repo
+ANSIBLE_REPO=""
+ANSIBLE_MOUNT_OPTS=""
+[ -z "${ANSIBLE_REPO}" ] || ANSIBLE_MOUNT_OPTS="-v ${ANSIBLE_REPO}:/usr/share/ansible/openshift-ansible${MOUNT_FLAGS}"
+
+# Images
+INSTALLER_IMAGE="registry.svc.ci.openshift.org/openshift/origin-v4.0:installer"
+ANSIBLE_IMAGE="quay.io/vrutkovs/openshift-40-centos"
 
 if [ ! -f ./pull_secret.json ]; then
   echo "Pull secret not found!"
@@ -63,6 +69,7 @@ mkdir -p ./auth
 chmod 777 ./auth
 ${PODMAN} pull ${ANSIBLE_IMAGE}
 ${PODMAN_RUN} \
+  ${ANSIBLE_MOUNT_OPTS} \
   -v $(pwd)/injected:/usr/share/ansible/openshift-ansible/inventory/dynamic/injected${MOUNT_FLAGS} \
   -v $(pwd)/auth:/tmp/artifacts/installer/auth${MOUNT_FLAGS} \
   -e INSTANCE_PREFIX="${USERNAME}" \
@@ -77,6 +84,7 @@ echo "Exit the shell to deprovision cluster"
 sh
 
 ${PODMAN_RUN} \
+  ${ANSIBLE_MOUNT_OPTS} \
   -v $(pwd)/injected:/usr/share/ansible/openshift-ansible/inventory/dynamic/injected${MOUNT_FLAGS} \
   -e INSTANCE_PREFIX="${USERNAME}" \
   -e OPTS="-vvv" \
