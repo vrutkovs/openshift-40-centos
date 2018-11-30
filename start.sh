@@ -14,7 +14,6 @@ ANSIBLE_IMAGE="quay.io/vrutkovs/openshift-40-centos"
 MOUNT_FLAGS=":z"
 # Update with docker if podman is not available
 PODMAN="sudo podman"
-PODMAN_PULL="${PODMAN} pull"
 # Add necessary flags, e.g. '--net=host --privileged' if needed
 PODMAN_RUN="${PODMAN} run --rm -v $(pwd):/output${MOUNT_FLAGS} --user $(id -u)"
 # Adjust installer params
@@ -42,7 +41,7 @@ rm -rvf install-config.yml .openshift_install_state.json .openshift_install.log 
 
 echo
 echo "Fetching installer"
-${PODMAN_PULL} ${INSTALLER_IMAGE}
+${PODMAN} pull ${INSTALLER_IMAGE}
 ${PODMAN_RUN} -rm -ti ${INSTALLER_IMAGE} version
 
 echo
@@ -62,7 +61,7 @@ echo
 echo "Provisioning GCP cluster"
 mkdir -p ./auth
 chmod 777 ./auth
-${PODMAN_PULL} ${ANSIBLE_IMAGE}
+${PODMAN} pull ${ANSIBLE_IMAGE}
 ${PODMAN_RUN} \
   -v $(pwd)/injected:/usr/share/ansible/openshift-ansible/inventory/dynamic/injected${MOUNT_FLAGS} \
   -v $(pwd)/auth:/tmp/artifacts/installer/auth${MOUNT_FLAGS} \
