@@ -11,7 +11,7 @@ COPY origin-extra-root /
 RUN INSTALL_PKGS="python-lxml python-dns pyOpenSSL python2-cryptography openssl python2-passlib httpd-tools openssh-clients origin-clients iproute patch google-cloud-sdk git" \
  && yum clean metadata \
  && yum install -y --setopt=tsflags=nodocs $INSTALL_PKGS \
- && EPEL_PKGS="ansible python2-boto python2-boto3 python2-crypto which python2-pip.noarch python2-scandir python2-packaging" \
+ && EPEL_PKGS="ansible python2-boto python2-crypto which python2-pip.noarch python2-scandir python2-packaging" \
  && yum install -y epel-release \
  && yum install -y --setopt=tsflags=nodocs $EPEL_PKGS \
  && rpm -V $INSTALL_PKGS $EPEL_PKGS $EPEL_TESTING_PKGS \
