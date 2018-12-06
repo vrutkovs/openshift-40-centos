@@ -54,9 +54,9 @@ echo
 echo "Creating bootstrap.ign"
 ${PODMAN_RUN} $PODMAN_PARAMS -ti ${INSTALLER_IMAGE} create install-config
 
-# sed -i "/master/{n;s/1/3/}" .openshift_install_state.json
+sed -i "/master/{n;s/1/3/}" .openshift_install_state.json
 sed -i "/worker/{n;s/1/3/}" .openshift_install_state.json
-# sed -i "/master/{n;n;s/1/3/}" install-config.yml
+sed -i "/master/{n;n;s/1/3/}" install-config.yml
 sed -i "/worker/{n;n;s/1/3/}" install-config.yml
 
 ${PODMAN_RUN} $PODMAN_PARAMS -ti ${INSTALLER_IMAGE} create ignition-configs
