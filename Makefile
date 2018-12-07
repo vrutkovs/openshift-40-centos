@@ -1,4 +1,3 @@
-USERNAME=vrutkovs
 BASE_DOMAIN=origin-gce.dev.openshift.com
 MOUNT_FLAGS=:z
 PODMAN=sudo podman
@@ -24,6 +23,10 @@ help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 check: ## Verify all necessary files exist
+	if [ -z ${USERNAME} ]; then                 \
+		echo "Make sure USERNAME env var is set " \
+		exit 1;                                   \
+	fi;
 	if [ ! -f ./pull_secret.json ]; then   \
 	  echo "Pull secret not found!"        \
 	  exit 1;                              \
