@@ -24,7 +24,7 @@ Prepare "injected/" directory which contains the following files (see `example-i
 * `vars-origin.yaml` - Origin-related vars
 
 # Start the install
-Run `./start.sh <your username>`
+Run `make USERNAME=<your username>`
 
 It would do the following:
 * Use openshift-installer to create install configs
@@ -32,6 +32,17 @@ It would do the following:
 * Use openshift-installer to create Ignition configs for bootstrap node
 * Run a playbook, which would convert Ignition files into ansible tasks and provisions the cluster
 
-In the end the playbook would create `./auth/kubeconfig` file, which can be used to access the cluster
-and start 'sh' shell.
-Exit the shell (Ctrl+D) to start cluster deprovision.
+In the end the playbook would create `./auth/kubeconfig` file, which can be used to access the cluster:
+```
+export KUBECONFIG=./auth/kubeconfig
+oc status
+```
+
+Deprovision the cluster by running `make deprovision`.
+
+# Tips & tricks
+* Mount your own version of openshift-ansible with `make ANSIBLE_REPO=local/path/to/openshift-ansible`
+
+* If the playbook fails enter the container shell:
+`make config shell`, adjust the playbook and run `/usr/local/bin/entrypoint-gcp /usr/local/bin/run` in the container
+to start the deploy
