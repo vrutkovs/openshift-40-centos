@@ -59,7 +59,7 @@ shell: ## Open a shell in openshift-ansible container
 pull-ansible-image: ## Pull latest openshift-ansible container
 	${PODMAN} pull ${ANSIBLE_IMAGE}
 
-provision: ## Deploy GCE cluster
+provision: check ## Deploy GCE cluster
 	mkdir -p ./auth
 	chmod 777 ./auth
 	${PODMAN_RUN} \
