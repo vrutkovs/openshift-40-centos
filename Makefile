@@ -69,7 +69,7 @@ provision: check ## Deploy GCE cluster
 	  ${ADDITIONAL_PARAMS} \
 	  -ti ${ANSIBLE_IMAGE}
 
-deprovision: ## Remove GCE bits
+deprovision: cleanup ## Remove GCE bits
 	${PODMAN_RUN} \
 	  ${ANSIBLE_MOUNT_OPTS:-} \
 	  -v `pwd`/injected:/usr/share/ansible/openshift-ansible/inventory/dynamic/injected${MOUNT_FLAGS} \
