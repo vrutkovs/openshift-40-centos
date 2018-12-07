@@ -24,7 +24,7 @@ Prepare "injected/" directory which contains the following files (see `example-i
 * `vars-origin.yaml` - Origin-related vars
 
 # Start the install
-Run `make USERNAME=<your username>`
+Run `make install USERNAME=<your username>`
 
 It would do the following:
 * Use openshift-installer to create install configs
@@ -42,6 +42,8 @@ Deprovision the cluster by running `make deprovision`.
 
 # Tips & tricks
 * Mount your own version of openshift-ansible with `make ANSIBLE_REPO=local/path/to/openshift-ansible`
+
+* Check `make help` for Makefile target descriptions
 
 * If the playbook fails enter the container shell:
 `make config shell`, adjust the playbook and run `/usr/local/bin/entrypoint-gcp /usr/local/bin/run` in the container

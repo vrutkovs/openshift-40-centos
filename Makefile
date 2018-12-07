@@ -17,9 +17,13 @@ ifneq ("$(ANSIBLE_REPO)","")
 	ANSIBLE_MOUNT_OPTS=-v ${ANSIBLE_REPO}:/usr/share/ansible/openshift-ansible${MOUNT_FLAGS}
 endif
 
-all: check cleanup pull-installer config pull-ansible-image provision
+all: help
+install: check cleanup pull-installer config pull-ansible-image provision ## Start install from scratch
 
-check:
+help:
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+check: ## Verify all necessary files exist
 	if [ ! -f ./pull_secret.json ]; then   \
 	  echo "Pull secret not found!"        \
 	  exit 1;                              \
@@ -29,13 +33,13 @@ check:
 	  exit 1;                              \
 	fi;
 
-cleanup:
+cleanup: ## Remove remaining installer bits
 	rm -rvf install-config.yml .openshift_install_state.json .openshift_install.log *.ign || true
 
-pull-installer:
+pull-installer: ## Pull fresh installer image
 	${PODMAN} pull ${INSTALLER_IMAGE}
 
-config:
+config: ## Prepare a fresh bootstrap.ign
 	${PODMAN_RUN} -rm -ti ${INSTALLER_IMAGE} version
 	${PODMAN_RUN} ${PODMAN_PARAMS} -ti ${INSTALLER_IMAGE} create install-config
 	sed -i "/master/{n;s/1/3/}" .openshift_install_state.json
@@ -45,14 +49,14 @@ config:
 	${PODMAN_RUN} ${PODMAN_PARAMS} -ti ${INSTALLER_IMAGE} create ignition-configs
 	cp bootstrap.ign injected/
 
-shell:
+shell: ## Open a shell in openshift-ansible container
 	ADDITIONAL_PARAMS="${ADDITIONAL_PARAMS} --entrypoint=/bin/sh"
 	make provision
 
-pull-ansible-image:
+pull-ansible-image: ## Pull latest openshift-ansible container
 	${PODMAN} pull ${ANSIBLE_IMAGE}
 
-provision:
+provision: ## Deploy GCE cluster
 	mkdir -p ./auth
 	chmod 777 ./auth
 	${PODMAN_RUN} \
@@ -62,7 +66,7 @@ provision:
 	  ${ADDITIONAL_PARAMS} \
 	  -ti ${ANSIBLE_IMAGE}
 
-deprovision:
+deprovision: ## Remove GCE bits
 	${PODMAN_RUN} \
 	  ${ANSIBLE_MOUNT_OPTS:-} \
 	  -v `pwd`/injected:/usr/share/ansible/openshift-ansible/inventory/dynamic/injected${MOUNT_FLAGS} \
