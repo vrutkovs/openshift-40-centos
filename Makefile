@@ -42,7 +42,7 @@ cleanup: ## Remove remaining installer bits
 pull-installer: ## Pull fresh installer image
 	${PODMAN} pull ${INSTALLER_IMAGE}
 
-config: ## Prepare a fresh bootstrap.ign
+config: check ## Prepare a fresh bootstrap.ign
 	${PODMAN_RUN} -rm -ti ${INSTALLER_IMAGE} version
 	${PODMAN_RUN} ${PODMAN_PARAMS} -ti ${INSTALLER_IMAGE} create install-config
 	sed -i "/master/{n;s/1/3/}" .openshift_install_state.json
