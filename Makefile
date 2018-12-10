@@ -4,10 +4,10 @@ PODMAN=sudo podman
 PODMAN_RUN=${PODMAN} run --privileged --rm -v `pwd`:/output${MOUNT_FLAGS} --user `id -u`
 PODMAN_PARAMS=-e OPENSHIFT_INSTALL_PLATFORM=libvirt \
 -e OPENSHIFT_INSTALL_LIBVIRT_URI=qemu+tcp://192.168.122.1/system \
+-e OPENSHIFT_INSTALL_LIBVIRT_IMAGE="file:///unused" \
 -e OPENSHIFT_INSTALL_CLUSTER_NAME=${USERNAME} \
 -e OPENSHIFT_INSTALL_BASE_DOMAIN=${BASE_DOMAIN} \
 -e OPENSHIFT_INSTALL_PULL_SECRET_PATH=/output/pull_secret.json
-#ANSIBLE_REPO=/home/vrutkovs/src/openshift-ansible
 ANSIBLE_REPO=
 INSTALLER_IMAGE=registry.svc.ci.openshift.org/openshift/origin-v4.0:installer
 ANSIBLE_IMAGE=quay.io/vrutkovs/openshift-40-centos
