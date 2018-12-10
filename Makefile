@@ -1,7 +1,7 @@
 BASE_DOMAIN=origin-gce.dev.openshift.com
 MOUNT_FLAGS=:z
 PODMAN=sudo podman
-PODMAN_RUN=${PODMAN} run --privileged --rm -v `pwd`:/output${MOUNT_FLAGS} --user `id -u`
+PODMAN_RUN=${PODMAN} run --privileged --rm -v $(shell pwd):/output${MOUNT_FLAGS} --user $(shell id -u)
 PODMAN_PARAMS=-e OPENSHIFT_INSTALL_PLATFORM=libvirt \
 -e OPENSHIFT_INSTALL_LIBVIRT_URI=qemu+tcp://192.168.122.1/system \
 -e OPENSHIFT_INSTALL_LIBVIRT_IMAGE="file:///unused" \
@@ -64,15 +64,15 @@ provision: check ## Deploy GCE cluster
 	chmod 777 ./auth
 	${PODMAN_RUN} \
 	  ${ANSIBLE_MOUNT_OPTS:-} \
-	  -v `pwd`/injected:/usr/share/ansible/openshift-ansible/inventory/dynamic/injected${MOUNT_FLAGS} \
-	  -v `pwd`/auth:/tmp/artifacts/installer/auth${MOUNT_FLAGS} \
+	  -v $(shell pwd)/injected:/usr/share/ansible/openshift-ansible/inventory/dynamic/injected${MOUNT_FLAGS} \
+	  -v $(shell pwd)/auth:/tmp/artifacts/installer/auth${MOUNT_FLAGS} \
 	  ${ADDITIONAL_PARAMS} \
 	  -ti ${ANSIBLE_IMAGE}
 
 deprovision: cleanup ## Remove GCE bits
 	${PODMAN_RUN} \
 	  ${ANSIBLE_MOUNT_OPTS:-} \
-	  -v `pwd`/injected:/usr/share/ansible/openshift-ansible/inventory/dynamic/injected${MOUNT_FLAGS} \
+	  -v $(shell pwd)/injected:/usr/share/ansible/openshift-ansible/inventory/dynamic/injected${MOUNT_FLAGS} \
 	  ${ADDITIONAL_PARAMS} \
 	  -ti ${ANSIBLE_IMAGE} \
 	  deprovision
