@@ -8,10 +8,14 @@ PODMAN_PARAMS=-e OPENSHIFT_INSTALL_PLATFORM=libvirt \
 -e OPENSHIFT_INSTALL_CLUSTER_NAME=${USERNAME} \
 -e OPENSHIFT_INSTALL_BASE_DOMAIN=${BASE_DOMAIN} \
 -e OPENSHIFT_INSTALL_PULL_SECRET_PATH=/output/pull_secret.json
-ANSIBLE_REPO=
 INSTALLER_IMAGE=registry.svc.ci.openshift.org/openshift/origin-v4.0:installer
 ANSIBLE_IMAGE=quay.io/vrutkovs/openshift-40-centos
 ADDITIONAL_PARAMS=-e INSTANCE_PREFIX="${USERNAME}" -e OPTS="-vvv"
+LATEST_RELEASE=
+ifneq ("$(LATEST_RELEASE)","")
+	PODMAN_PARAMS+=-e OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE=registry.svc.ci.openshift.org/openshift/origin-release:v4.0
+endif
+ANSIBLE_REPO=
 ifneq ("$(ANSIBLE_REPO)","")
 	ANSIBLE_MOUNT_OPTS=-v ${ANSIBLE_REPO}:/usr/share/ansible/openshift-ansible${MOUNT_FLAGS}
 endif
