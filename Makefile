@@ -67,7 +67,7 @@ provision: check ## Deploy GCE cluster
 	mkdir -p ./auth
 	chmod 777 ./auth
 	${PODMAN_RUN} \
-	  ${ANSIBLE_MOUNT_OPTS:-} \
+	  ${ANSIBLE_MOUNT_OPTS} \
 	  -v $(shell pwd)/injected:/usr/share/ansible/openshift-ansible/inventory/dynamic/injected${MOUNT_FLAGS} \
 	  -v $(shell pwd)/auth:/tmp/artifacts/installer/auth${MOUNT_FLAGS} \
 	  ${ADDITIONAL_PARAMS} \
@@ -75,7 +75,7 @@ provision: check ## Deploy GCE cluster
 
 deprovision: cleanup ## Remove GCE bits
 	${PODMAN_RUN} \
-	  ${ANSIBLE_MOUNT_OPTS:-} \
+	  ${ANSIBLE_MOUNT_OPTS} \
 	  -v $(shell pwd)/injected:/usr/share/ansible/openshift-ansible/inventory/dynamic/injected${MOUNT_FLAGS} \
 	  ${ADDITIONAL_PARAMS} \
 	  -ti ${ANSIBLE_IMAGE} \
