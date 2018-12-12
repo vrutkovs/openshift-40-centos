@@ -2,18 +2,12 @@ BASE_DOMAIN=origin-gce.dev.openshift.com
 MOUNT_FLAGS=:z
 PODMAN=sudo podman
 PODMAN_RUN=${PODMAN} run --privileged --rm -v $(shell pwd):/output${MOUNT_FLAGS} --user $(shell id -u)
-PODMAN_PARAMS=-e OPENSHIFT_INSTALL_PLATFORM=libvirt \
--e OPENSHIFT_INSTALL_LIBVIRT_URI=qemu+tcp://192.168.122.1/system \
--e OPENSHIFT_INSTALL_LIBVIRT_IMAGE="file:///unused" \
--e OPENSHIFT_INSTALL_CLUSTER_NAME=${USERNAME} \
--e OPENSHIFT_INSTALL_BASE_DOMAIN=${BASE_DOMAIN} \
--e OPENSHIFT_INSTALL_PULL_SECRET_PATH=/output/pull_secret.json
 INSTALLER_IMAGE=registry.svc.ci.openshift.org/openshift/origin-v4.0:installer
 ANSIBLE_IMAGE=quay.io/vrutkovs/openshift-40-centos
 ADDITIONAL_PARAMS=-e INSTANCE_PREFIX="${USERNAME}" -e OPTS="-vvv"
 LATEST_RELEASE=
 ifneq ("$(LATEST_RELEASE)","")
-	PODMAN_PARAMS+=-e OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE=registry.svc.ci.openshift.org/openshift/origin-release:v4.0
+	RELEASE_IMAGE=registry.svc.ci.openshift.org/openshift/origin-release:v4.0
 endif
 ANSIBLE_REPO=
 ifneq ("$(ANSIBLE_REPO)","")
@@ -48,11 +42,8 @@ pull-installer: ## Pull fresh installer image
 
 config: check ## Prepare a fresh bootstrap.ign
 	${PODMAN_RUN} --rm -ti ${INSTALLER_IMAGE} version
-	${PODMAN_RUN} ${PODMAN_PARAMS} -ti ${INSTALLER_IMAGE} create install-config
-	sed -i "/master/{n;s/1/3/}" .openshift_install_state.json
-	sed -i "/worker/{n;s/1/3/}" .openshift_install_state.json
-	sed -i "/master/{n;n;s/1/3/}" install-config.yml
-	sed -i "/worker/{n;n;s/1/3/}" install-config.yml
+	env BASE_DOMAIN=${BASE_DOMAIN} ansible all -i "localhost," --connection=local -e "ansible_python_interpreter=/usr/bin/python3" \
+	  -m template -a "src=install-config.yml.j2 dest=install-config.yml"
 	${PODMAN_RUN} ${PODMAN_PARAMS} -ti ${INSTALLER_IMAGE} create ignition-configs
 	cp bootstrap.ign injected/
 
