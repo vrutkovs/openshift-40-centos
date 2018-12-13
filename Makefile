@@ -10,6 +10,9 @@ LATEST_RELEASE=
 ifneq ("$(LATEST_RELEASE)","")
 	RELEASE_IMAGE=registry.svc.ci.openshift.org/openshift/origin-release:v4.0
 endif
+ifneq ("$(RELEASE_IMAGE)","")
+	IGNITION_PARAMS=-e OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE=${RELEASE_IMAGE}
+endif
 ANSIBLE_REPO=
 ifneq ("$(ANSIBLE_REPO)","")
 	ANSIBLE_MOUNT_OPTS=-v ${ANSIBLE_REPO}:/usr/share/ansible/openshift-ansible${MOUNT_FLAGS}
@@ -45,7 +48,7 @@ config: check ## Prepare a fresh bootstrap.ign
 	${PODMAN_RUN} --rm -ti ${INSTALLER_IMAGE} version
 	env BASE_DOMAIN=${BASE_DOMAIN} ansible all -i "localhost," --connection=local -e "ansible_python_interpreter=${PYTHON}" \
 	  -m template -a "src=install-config.yml.j2 dest=install-config.yml"
-	${PODMAN_RUN} ${PODMAN_PARAMS} -ti ${INSTALLER_IMAGE} create ignition-configs
+	${PODMAN_RUN} ${IGNITION_PARAMS} -ti ${INSTALLER_IMAGE} create ignition-configs
 	cp bootstrap.ign injected/
 
 shell: ## Open a shell in openshift-ansible container
