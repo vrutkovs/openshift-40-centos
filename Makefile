@@ -5,6 +5,7 @@ PODMAN_RUN=${PODMAN} run --privileged --rm -v $(shell pwd):/output${MOUNT_FLAGS}
 INSTALLER_IMAGE=registry.svc.ci.openshift.org/openshift/origin-v4.0:installer
 ANSIBLE_IMAGE=quay.io/vrutkovs/openshift-40-centos
 ADDITIONAL_PARAMS=-e INSTANCE_PREFIX="${USERNAME}" -e OPTS="-vvv"
+PYTHON=/usr/bin/python3
 LATEST_RELEASE=
 ifneq ("$(LATEST_RELEASE)","")
 	RELEASE_IMAGE=registry.svc.ci.openshift.org/openshift/origin-release:v4.0
@@ -42,7 +43,7 @@ pull-installer: ## Pull fresh installer image
 
 config: check ## Prepare a fresh bootstrap.ign
 	${PODMAN_RUN} --rm -ti ${INSTALLER_IMAGE} version
-	env BASE_DOMAIN=${BASE_DOMAIN} ansible all -i "localhost," --connection=local -e "ansible_python_interpreter=/usr/bin/python3" \
+	env BASE_DOMAIN=${BASE_DOMAIN} ansible all -i "localhost," --connection=local -e "ansible_python_interpreter=${PYTHON}" \
 	  -m template -a "src=install-config.yml.j2 dest=install-config.yml"
 	${PODMAN_RUN} ${PODMAN_PARAMS} -ti ${INSTALLER_IMAGE} create ignition-configs
 	cp bootstrap.ign injected/
