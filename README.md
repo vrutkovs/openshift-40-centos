@@ -38,7 +38,7 @@ export KUBECONFIG=./auth/kubeconfig
 oc status
 ```
 
-Deprovision the cluster by running `make deprovision`.
+Deprovision the cluster by running `make deprovision USERNAME=<your username>`.
 
 # Tips & tricks
 * Mount your own version of openshift-ansible with `make ANSIBLE_REPO=local/path/to/openshift-ansible`
