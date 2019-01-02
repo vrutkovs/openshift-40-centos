@@ -39,7 +39,7 @@ check: ## Verify all necessary files exist
 	fi;
 
 cleanup: ## Remove remaining installer bits
-	rm -rvf install-config.yml .openshift_install_state.json .openshift_install.log *.ign || true
+	rm -rvf install-config.yaml install-config.ansible.yaml .openshift_install_state.json .openshift_install.log *.ign || true
 
 pull-installer: ## Pull fresh installer image
 	${PODMAN} pull ${INSTALLER_IMAGE}
@@ -48,6 +48,7 @@ config: check ## Prepare a fresh bootstrap.ign
 	${PODMAN_RUN} --rm -ti ${INSTALLER_IMAGE} version
 	env BASE_DOMAIN=${BASE_DOMAIN} ansible all -i "localhost," --connection=local -e "ansible_python_interpreter=${PYTHON}" \
 	  -m template -a "src=install-config.yaml.j2 dest=install-config.yaml"
+	cp install-config{,.ansible}.yaml
 	${PODMAN_RUN} ${IGNITION_PARAMS} -ti ${INSTALLER_IMAGE} create ignition-configs
 	cp bootstrap.ign injected/
 
@@ -65,6 +66,7 @@ provision: check ## Deploy GCE cluster
 	  ${ANSIBLE_MOUNT_OPTS} \
 	  -v $(shell pwd)/injected:/usr/share/ansible/openshift-ansible/inventory/dynamic/injected${MOUNT_FLAGS} \
 	  -v $(shell pwd)/auth:/tmp/artifacts/installer/auth${MOUNT_FLAGS} \
+	  -v $(shell pwd)/install-config.ansible.yaml:/tmp/install-config.ansible.yaml${MOUNT_FLAGS} \
 	  ${ADDITIONAL_PARAMS} \
 	  -ti ${ANSIBLE_IMAGE}
 
@@ -72,6 +74,7 @@ deprovision: cleanup ## Remove GCE bits
 	${PODMAN_RUN} \
 	  ${ANSIBLE_MOUNT_OPTS} \
 	  -v $(shell pwd)/injected:/usr/share/ansible/openshift-ansible/inventory/dynamic/injected${MOUNT_FLAGS} \
+	  -v $(shell pwd)/install-config.ansible.yaml:/tmp/install-config.ansible.yaml${MOUNT_FLAGS} \
 	  ${ADDITIONAL_PARAMS} \
 	  -ti ${ANSIBLE_IMAGE} \
 	  deprovision

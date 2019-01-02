@@ -4,5 +4,6 @@ auth/
 .openshift_install_state.json
 .openshift_install.log
 install-config.yaml
+install-config.ansible.yaml
 *.ign
 .terraform.d/
