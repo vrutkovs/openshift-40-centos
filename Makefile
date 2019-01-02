@@ -47,7 +47,7 @@ pull-installer: ## Pull fresh installer image
 config: check ## Prepare a fresh bootstrap.ign
 	${PODMAN_RUN} --rm -ti ${INSTALLER_IMAGE} version
 	env BASE_DOMAIN=${BASE_DOMAIN} ansible all -i "localhost," --connection=local -e "ansible_python_interpreter=${PYTHON}" \
-	  -m template -a "src=install-config.yml.j2 dest=install-config.yml"
+	  -m template -a "src=install-config.yaml.j2 dest=install-config.yaml"
 	${PODMAN_RUN} ${IGNITION_PARAMS} -ti ${INSTALLER_IMAGE} create ignition-configs
 	cp bootstrap.ign injected/
 
