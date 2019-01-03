@@ -2,7 +2,9 @@ BASE_DOMAIN=origin-gce.dev.openshift.com
 MOUNT_FLAGS=:z
 PODMAN=sudo podman
 PODMAN_RUN=${PODMAN} run --privileged --rm -v $(shell pwd):/output${MOUNT_FLAGS} --user $(shell id -u)
-INSTALLER_IMAGE=registry.svc.ci.openshift.org/openshift/origin-v4.0:installer
+#INSTALLER_IMAGE=registry.svc.ci.openshift.org/openshift/origin-v4.0:installer
+#INSTALLER_IMAGE=localhost/vrutkovs/installer
+INSTALLER_IMAGE=localhost/vrutkovs/installer-bare
 ANSIBLE_IMAGE=quay.io/vrutkovs/openshift-40-centos
 ADDITIONAL_PARAMS=-e INSTANCE_PREFIX="${USERNAME}" -e OPTS="-vvv"
 PYTHON=/usr/bin/python3
@@ -42,7 +44,7 @@ cleanup: ## Remove remaining installer bits
 	rm -rvf install-config.yaml install-config.ansible.yaml .openshift_install_state.json .openshift_install.log *.ign || true
 
 pull-installer: ## Pull fresh installer image
-	${PODMAN} pull ${INSTALLER_IMAGE}
+	#${PODMAN} pull ${INSTALLER_IMAGE}
 
 config: check ## Prepare a fresh bootstrap.ign
 	${PODMAN_RUN} --rm -ti ${INSTALLER_IMAGE} version
@@ -53,11 +55,11 @@ config: check ## Prepare a fresh bootstrap.ign
 	cp bootstrap.ign injected/
 
 shell: ## Open a shell in openshift-ansible container
-	ADDITIONAL_PARAMS="${ADDITIONAL_PARAMS} --entrypoint=/bin/sh"
+	ADDITIONAL_PARAMS+=--entrypoint=/bin/sh
 	make provision
 
 pull-ansible-image: ## Pull latest openshift-ansible container
-	${PODMAN} pull ${ANSIBLE_IMAGE}
+	#${PODMAN} pull ${ANSIBLE_IMAGE}
 
 provision: check ## Deploy GCE cluster
 	mkdir -p ./auth
@@ -74,7 +76,6 @@ deprovision: cleanup ## Remove GCE bits
 	${PODMAN_RUN} \
 	  ${ANSIBLE_MOUNT_OPTS} \
 	  -v $(shell pwd)/injected:/usr/share/ansible/openshift-ansible/inventory/dynamic/injected${MOUNT_FLAGS} \
-	  -v $(shell pwd)/install-config.ansible.yaml:/tmp/install-config.ansible.yaml${MOUNT_FLAGS} \
 	  ${ADDITIONAL_PARAMS} \
 	  -ti ${ANSIBLE_IMAGE} \
 	  deprovision
