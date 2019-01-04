@@ -7,3 +7,4 @@ install-config.yaml
 install-config.ansible.yaml
 *.ign
 .terraform.d/
+.aws/

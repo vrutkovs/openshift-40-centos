@@ -1,4 +1,4 @@
-BASE_DOMAIN=origin-gce.dev.openshift.com
+BASE_DOMAIN=devcluster.openshift.com
 MOUNT_FLAGS=:z
 PODMAN=sudo podman
 PODMAN_RUN=${PODMAN} run --privileged --rm -v $(shell pwd):/output${MOUNT_FLAGS} --user $(shell id -u)
@@ -12,7 +12,7 @@ ifneq ("$(LATEST_RELEASE)","")
 	RELEASE_IMAGE=registry.svc.ci.openshift.org/openshift/origin-release:v4.0
 endif
 ifneq ("$(RELEASE_IMAGE)","")
-	IGNITION_PARAMS=-e OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE=${RELEASE_IMAGE}
+	IGNITION_PARAMS=-e OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE=${RELEASE_IMAGE} -v $(shell pwd)/injected/credentials:/output/.aws/credentials -e AWS_PROFILE=openshift-dev
 endif
 ANSIBLE_REPO=
 ifneq ("$(ANSIBLE_REPO)","")
