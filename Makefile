@@ -2,9 +2,7 @@ BASE_DOMAIN=origin-gce.dev.openshift.com
 MOUNT_FLAGS=:z
 PODMAN=sudo podman
 PODMAN_RUN=${PODMAN} run --privileged --rm -v $(shell pwd):/output${MOUNT_FLAGS} --user $(shell id -u)
-#INSTALLER_IMAGE=registry.svc.ci.openshift.org/openshift/origin-v4.0:installer
-#INSTALLER_IMAGE=localhost/vrutkovs/installer
-INSTALLER_IMAGE=localhost/vrutkovs/installer-bare
+INSTALLER_IMAGE=registry.svc.ci.openshift.org/openshift/origin-v4.0:installer
 ANSIBLE_IMAGE=quay.io/vrutkovs/openshift-40-centos
 ADDITIONAL_PARAMS=-e INSTANCE_PREFIX="${USERNAME}" -e OPTS="-vvv"
 PYTHON=/usr/bin/python3
@@ -44,7 +42,7 @@ cleanup: ## Remove remaining installer bits
 	rm -rvf install-config.yaml install-config.ansible.yaml .openshift_install_state.json .openshift_install.log *.ign || true
 
 pull-installer: ## Pull fresh installer image
-	#${PODMAN} pull ${INSTALLER_IMAGE}
+	${PODMAN} pull ${INSTALLER_IMAGE}
 
 config: check ## Prepare a fresh bootstrap.ign
 	${PODMAN_RUN} --rm -ti ${INSTALLER_IMAGE} version
