@@ -77,3 +77,19 @@ deprovision: cleanup ## Remove GCE bits
 	  ${ADDITIONAL_PARAMS} \
 	  -ti ${ANSIBLE_IMAGE} \
 	  deprovision
+
+pull-tests: ## Pull test image
+	${PODMAN} pull registry.svc.ci.openshift.org/openshift/origin-v4.0:tests
+
+test: ## Run openshift tests
+	rm -rf test-artifacts/
+	mkdir test-artifacts
+	${PODMAN_RUN} \
+	  ${ANSIBLE_MOUNT_OPTS} \
+	  -v $(shell pwd)/auth:/auth${MOUNT_FLAGS} \
+	  -v $(shell pwd)/test.sh:/usr/bin/test.sh \
+	  -v $(shell pwd)/test-artifacts:/tmp/artifacts \
+	  ${ADDITIONAL_PARAMS} \
+	  --entrypoint=/bin/sh \
+	  -ti registry.svc.ci.openshift.org/openshift/origin-v4.0:tests \
+	  /usr/bin/test.sh
