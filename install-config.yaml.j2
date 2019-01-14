@@ -1,3 +1,4 @@
+apiVersion: v1beta1
 baseDomain: {{ lookup('env', "BASE_DOMAIN") }}
 clusterID: {{ 99999999 | random | to_uuid }}
 machines:
