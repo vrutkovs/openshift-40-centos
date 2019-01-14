@@ -3,27 +3,25 @@ baseDomain: {{ lookup('env', "BASE_DOMAIN") }}
 clusterID: {{ 99999999 | random | to_uuid }}
 machines:
 - name: master
-  platform:
-    aws:
-      amiID: ami-70e8fd66
   replicas: 3
 - name: worker
-  platform:
-    aws:
-      amiID: ami-70e8fd66
   replicas: 3
+  # platform:
+  #   aws:
+  #     amiID: ami-a4be5dcb
 metadata:
   name: {{ lookup('env', "USERNAME") }}
 networking:
   clusterNetworks:
   - cidr:             10.128.0.0/14
     hostSubnetLength: 9
-  machineCIDR: 10.128.0.0/14
+  machineCIDR: 10.0.0.0/16
   serviceCIDR: 172.30.0.0/16
   type:        OpenshiftSDN
 platform:
   aws:
-    region: eu-west-3
+    region: eu-west-1
 pullSecret: |
   {{ lookup('file', "pull_secret.json") | indent(2) }}
-sshKey: ""
+sshKey: |
+  {{ lookup('file', "injected/ssh-publickey") | indent(2) }}
