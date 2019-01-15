@@ -4,7 +4,7 @@ PODMAN=sudo podman
 PODMAN_RUN=${PODMAN} run --privileged --rm -v $(shell pwd):/output${MOUNT_FLAGS} --user $(shell id -u)
 INSTALLER_IMAGE=registry.svc.ci.openshift.org/openshift/origin-v4.0:installer
 ANSIBLE_IMAGE=quay.io/vrutkovs/openshift-40-centos
-ADDITIONAL_PARAMS=-e INSTANCE_PREFIX="${USERNAME}" -e OPTS="-vvv -i inventory/hosts -e openshift_install_config_path=/tmp/install-config.ansible.yaml"
+ADDITIONAL_PARAMS=-e INSTANCE_PREFIX="${USERNAME}" -e OPTS="-vvv -e openshift_install_config_path=/tmp/install-config.ansible.yaml"
 PYTHON=/usr/bin/python3
 LATEST_RELEASE=
 ifneq ("$(LATEST_RELEASE)","")
@@ -81,12 +81,11 @@ pull-ansible-image: ## Pull latest openshift-ansible container
 scaleup: check ## Scaleup AWS workers
 	${PODMAN_RUN} \
 	  ${ANSIBLE_MOUNT_OPTS} \
-	  -v $(shell pwd)/injected/inventory:/usr/share/ansible/openshift-ansible/inventory/hosts${MOUNT_FLAGS} \
 	  -v $(shell pwd)/root/usr/local/bin:/usr/local/bin${MOUNT_FLAGS} \
-	  -v $(shell pwd)/injected/vars-origin.yaml:/usr/share/ansible/openshift-ansible/inventory/group_vars/all/vars-origin.yaml${MOUNT_FLAGS} \
+	  -v $(shell pwd)/injected:/usr/share/ansible/openshift-ansible/inventory/dynamic/injected${MOUNT_FLAGS} \
 	  -v ~/.ssh:/usr/share/ansible/openshift-ansible/.ssh \
 	  -v $(shell pwd)/install-config.ansible.yaml:/tmp/install-config.ansible.yaml${MOUNT_FLAGS} \
-		-v $(shell pwd)/auth:/auth${MOUNT_FLAGS} \
+	  -v $(shell pwd)/auth:/auth${MOUNT_FLAGS} \
 	  ${ADDITIONAL_PARAMS} \
 	  -ti ${ANSIBLE_IMAGE}
 

@@ -9,4 +9,6 @@
 # SOURCE and HOME DIRECTORY: /opt/app-root/src
 
 cd ${WORK_DIR}
-exec ansible-playbook ${OPTS} test/gcp/launch.yml
+#exec ansible-playbook ${OPTS} test/gcp/launch.yml
+#exec ansible-playbook ${OPTS} playbooks/openshift-node/scaleup.yml
+exec ansible-playbook ${OPTS} -e kubeconfig_path=/auth/kubeconfig test/aws/scaleup.yml

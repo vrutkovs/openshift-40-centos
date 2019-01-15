@@ -6,6 +6,6 @@
 
 set -euo pipefail
 
-export TYPE='gcp'
+export TYPE='aws'
 
 exec /usr/local/bin/entrypoint-provider "$@"
