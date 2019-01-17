@@ -8,3 +8,7 @@ install-config.ansible.yaml
 *.ign
 .terraform.d/
 .aws/
+terraform.tfstate
+terraform.tfvars
+tls/
+metadata.json
