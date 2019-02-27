@@ -1,11 +1,6 @@
-apiVersion: v1beta1
+apiVersion: v1beta3
 baseDomain: {{ lookup('env', "BASE_DOMAIN") }}
 clusterID: {{ 99999999 | random | to_uuid }}
-machines:
-- name: master
-  replicas: 3
-- name: worker
-  replicas: 3
 metadata:
   name: {{ lookup('env', "USERNAME") }}
 networking:
